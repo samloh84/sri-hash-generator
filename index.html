@@ -1,0 +1,139 @@
+<html lang="en">
+<head>
+    <title>SRI Hash Generator</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto"
+          rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+
+        textarea {
+            display: block;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            font-family: 'Roboto Mono', monospace;
+        }
+    </style>
+
+</head>
+<body>
+<div><h1>SRI Hash Generator</h1></div>
+<div>
+    <label for="urls">Input URLs:</label>
+    <textarea id="urls"></textarea>
+</div>
+<div>
+    <label for="sri_hashes">SRI Hashes:</label>
+    <textarea id="sri_hashes"></textarea>
+</div>
+<div>Inspired by:
+    <a href="https://www.srihash.org/">https://www.srihash.org/</a>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"
+        integrity="sha384-JUMjoW8OzDJw4oFpWIB2Bu/c6768ObEthBMVSiIx4ruBIEdyNSUQAjJNFqT5pnJ6"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"
+        integrity="sha384-2HWZ0KJxkQ3nhRpHPzk4AO2iIy1S8rSGwN5MpMS/xf34mqOahLqEbqwvdk48EnEv"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"
+        integrity="sha384-lp4k1VRKPU9eBnPePjnJ9M2RF3i7PC30gXs70+elCVfgwLwx1tv5+ctxdtwxqZa7"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"
+        integrity="sha384-U/+EF1mNzvy5eahP9DeB32duTkAmXrePwnRWtuSh1C/bHHhyR1KZCr/aGZBkctpY"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.4/bluebird.min.js"
+        integrity="sha384-EVdKcrObd7cU/1MRyDT606D1F6s6WY1U4BrMgWSNrQDmjHa8YDJcuWpP2AxmgsUv"
+        crossorigin="anonymous"></script>
+<script>
+    $(function () {
+        console.log(_.isEmpty);
+
+        let $sri_hashes = $('#sri_hashes');
+        let $urls = $('#urls');
+
+
+        window.hashes = {};
+
+        $urls.on('change keyup paste', function () {
+            let input = $urls.val();
+
+            let urls = [];
+
+            try {
+                $(`<div>${input}</div>`).find('script, link').each(function (index, element) {
+                    let $element = $(element);
+                    let tag_name = $element.prop('tagName').toLowerCase();
+
+                    if (tag_name === 'script') {
+                        let src = $element.attr('src');
+                        if (!_.isEmpty(src)) {
+                            urls.push(src);
+                        }
+                    } else if (tag_name === 'link' && $element.attr('rel') === 'stylesheet') {
+                        let href = $element.attr('href');
+                        if (!_.isEmpty(href)) {
+                            urls.push(href);
+                        }
+                    }
+                })
+            } catch (err) {
+                console.error(err);
+                // Do nothing
+            }
+
+            let url_pattern = /^\s*(https?:\/\/.*)\s*$/gm;
+            let match;
+
+            while (!_.isNil((match = url_pattern.exec(input)))) {
+                let url = match[1];
+                urls.push(url);
+            }
+
+
+            urls = _.sortedUniqBy(_.uniq(_.filter(urls, function (url) {
+                return url.endsWith('.js') || url.endsWith('.css')
+            })));
+
+            return Promise.map(urls, function (url) {
+                if (_.has(window.hashes, url)) {
+                    return Promise.resolve(_.get(window.hashes, url));
+                } else {
+                    return axios({method: 'get', url: url})
+                        .then(function (response) {
+                            let hash = CryptoJS.enc.Base64.stringify(CryptoJS.SHA384(response.data));
+                            _.set(window.hashes, url, hash);
+                            return hash;
+                        })
+                        .catch(function (err) {
+                            console.error(err.stack);
+                            return null;
+                        });
+                }
+            })
+                .then(function (hashes) {
+                    let hashObject = _.zipObject(urls, hashes);
+                    console.log(hashObject);
+
+                    let output = _.map(hashObject, function (hash, url) {
+                        if (url.endsWith('.js')) {
+                            return _.unescape(`&lt;script src="${url}" integrity="sha384-${hash}" crossorigin="anonymous"&gt;&lt;/script&gt;`);
+                        } else if (url.endsWith('.css')) {
+                            return _.unescape(`&lt;link href="${url}" rel="stylesheet" integrity="sha384-${hash}" crossorigin="anonymous"/&gt;`);
+                        }
+                    }).join('\n');
+
+                    $sri_hashes.val(output);
+                });
+
+
+        });
+    })
+
+</script>
+</body>
+</html>
