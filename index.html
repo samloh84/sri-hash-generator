@@ -11,25 +11,34 @@
             font-family: 'Roboto', sans-serif;
         }
 
-        textarea {
+        body div {
             display: block;
             width: 90%;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        .textareas textarea {
+            width: 100%;
+            height: 200px;
             font-family: 'Roboto Mono', monospace;
         }
+
+
     </style>
 
 </head>
 <body>
 <div><h1>SRI Hash Generator</h1></div>
-<div>
-    <label for="urls">Input URLs:</label>
+<div class="textareas">
+    <label for="urls">Input URLs:</label><br>
     <textarea id="urls"></textarea>
+    <p>
 </div>
-<div>
-    <label for="sri_hashes">SRI Hashes:</label>
+<div class="textareas">
+    <label for="sri_hashes">SRI Hashes:</label><br>
     <textarea id="sri_hashes"></textarea>
+    <p>
 </div>
 <div>Inspired by:
     <a href="https://www.srihash.org/">https://www.srihash.org/</a>
