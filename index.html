@@ -2,71 +2,214 @@
 <head>
     <title>SRI Hash Generator</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto+Mono"
-          rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Roboto"
-          rel="stylesheet">
+          rel="stylesheet"
+          integrity="sha384-tLD56Z1D6Rz8WdhTUwFnaWpDgBwGXSv7vTWCaCqpusURWf+gnWmEZCoQZ3k77H1z"
+          crossorigin="anonymous"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"
+          integrity="sha384-Odv48pEUKW3AGKkoKLWKY2Mw1aUI5ZkuXpRK7/o9omLxaq6Cjg6zrblJWsUXnVNX"
+          crossorigin="anonymous"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous"/>
 
     <style>
         body {
             font-family: 'Roboto', sans-serif;
         }
 
-        body div {
-            display: block;
-            width: 90%;
-            margin-left: auto;
-            margin-right: auto;
-        }
 
-        .textareas textarea {
+        #sri_hashes, #urls {
+            font-family: 'Roboto Mono', monospace;
             width: 100%;
             height: 200px;
-            font-family: 'Roboto Mono', monospace;
         }
-
 
     </style>
 
 </head>
 <body>
-<div><h1>SRI Hash Generator</h1></div>
-<div class="textareas">
-    <label for="urls">Input URLs:</label><br>
-    <textarea id="urls"></textarea>
-    <p>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>SRI Hash Generator</h1>
+        </div>
+    </div>
+
+    <div class="row">
+
+
+        <div class="col-md-3"><h5>Frameworks on <a href="https://cdnjs.com/">cdnjs</a>
+        </h5>
+            <div id="cdnjs_frameworks" class="list-group"></div>
+        </div>
+
+        <div class="col-md-9">
+
+            <div>
+                <form>
+                    <div class="form-group">
+                        <label for="urls">Input URLs:</label><br>
+                        <textarea id="urls"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sri_hashes">SRI Hashes:</label><br>
+                        <textarea id="sri_hashes" readonly></textarea>
+                    </div>
+
+                    <button type="button" id="clear_urls"
+                            class="btn btn-primary btn-lg btn-block">Clear
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+
+    <footer class="mastfoot mt-auto">
+        <div class="inner">
+            Inspired by:
+            <a href="https://www.srihash.org/">https://www.srihash.org/</a>
+        </div>
+    </footer>
 </div>
-<div class="textareas">
-    <label for="sri_hashes">SRI Hashes:</label><br>
-    <textarea id="sri_hashes"></textarea>
-    <p>
-</div>
-<div>Inspired by:
-    <a href="https://www.srihash.org/">https://www.srihash.org/</a>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"
-        integrity="sha384-JUMjoW8OzDJw4oFpWIB2Bu/c6768ObEthBMVSiIx4ruBIEdyNSUQAjJNFqT5pnJ6"
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+        integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.0/umd/popper.min.js"
+        integrity="sha384-L2pyEeut/H3mtgCBaUNw7KWzp5n9+4pDQiExs933/5QfaTh8YStYFFkOzSoXjlTb"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"
         integrity="sha384-2HWZ0KJxkQ3nhRpHPzk4AO2iIy1S8rSGwN5MpMS/xf34mqOahLqEbqwvdk48EnEv"
         crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
+        integrity="sha384-fYxN7HsDOBRo1wT/NSZ0LkoNlcXvpDpFy6WzB42LxuKAX7sBwgo7vuins+E1HCaw"
+        crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"
         integrity="sha384-lp4k1VRKPU9eBnPePjnJ9M2RF3i7PC30gXs70+elCVfgwLwx1tv5+ctxdtwxqZa7"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"
-        integrity="sha384-U/+EF1mNzvy5eahP9DeB32duTkAmXrePwnRWtuSh1C/bHHhyR1KZCr/aGZBkctpY"
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.5.4/bluebird.min.js"
         integrity="sha384-EVdKcrObd7cU/1MRyDT606D1F6s6WY1U4BrMgWSNrQDmjHa8YDJcuWpP2AxmgsUv"
         crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"
+        integrity="sha384-U/+EF1mNzvy5eahP9DeB32duTkAmXrePwnRWtuSh1C/bHHhyR1KZCr/aGZBkctpY"
+        crossorigin="anonymous"></script>
 <script>
     $(function () {
-        console.log(_.isEmpty);
 
         let $sri_hashes = $('#sri_hashes');
         let $urls = $('#urls');
 
 
         window.hashes = {};
+
+
+        window.cdnjs_frameworks = {
+            'twitter-bootstrap': {
+                files: [
+                    'css/bootstrap.min.css',
+                    'js/bootstrap.min.js'
+                ],
+                dependencies: [
+                    'jquery',
+                    'popper.js',
+                ]
+            },
+            'jquery': {
+                files: ['jquery.min.js']
+            },
+            'popper.js': {
+                files: ['umd/popper.min.js']
+            },
+
+            'lodash.js': {
+                files: ['lodash.min.js']
+            },
+            'moment.js': {
+                files: ['moment.min.js']
+            },
+            'crypto-js': {
+                files: ['crypto-js.min.js']
+            },
+            'bluebird': {
+                files: ['bluebird.min.js']
+            },
+            'axios': {
+                files: ['axios.min.js']
+            }
+        };
+
+
+        Promise.map(_.keys(window.cdnjs_frameworks), function (cdnjs_framework) {
+            return Promise.resolve(axios.get(`https://api.cdnjs.com/libraries/${cdnjs_framework}`))
+                .then(function (response) {
+                    let files = _.get(window.cdnjs_frameworks, [cdnjs_framework, 'files']);
+                    let version = response.data.version;
+                    let name = response.data.name;
+                    let urls = _.map(files, function (file) {
+                        return `https://cdnjs.cloudflare.com/ajax/libs/${cdnjs_framework}/${version}/${file}`;
+                    });
+
+                    _.assign(_.get(window.cdnjs_frameworks, cdnjs_framework), {
+                        name: name,
+                        version: version,
+                        urls: urls,
+                        data: response.data
+                    });
+                });
+        })
+            .then(function () {
+
+                let $cdnjs_frameworks = $('#cdnjs_frameworks');
+                _.each(window.cdnjs_frameworks, function (cdnjs_framework) {
+                    let $button = $('<button>');
+                    $button.addClass('list-group-item list-group-item-action');
+
+                    $cdnjs_frameworks.append($button);
+
+                    let version = cdnjs_framework.version;
+                    let name = cdnjs_framework.name;
+                    let dependencies = _.map(cdnjs_framework.dependencies, function (dependency) {
+                        return _.get(window.cdnjs_frameworks, [dependency, 'urls'])
+                    });
+                    let urls = _.flattenDeep(_.concat([], dependencies, cdnjs_framework.urls));
+
+                    $button.text(`${name} ${version}`);
+                    $button.attr('data-urls', urls.join('|'));
+                });
+            })
+            .catch(function (err) {
+                console.error(err);
+            });
+
+        $('#cdnjs_frameworks').on('click', 'button', function (e) {
+            e.preventDefault();
+            let $this = $(this);
+            let $urls = $('#urls');
+            let urls = $this.attr('data-urls').split('|');
+            let existing_val = $urls.val();
+            urls = _.filter(urls, function (url) {
+                return existing_val.indexOf(url) === -1;
+            });
+
+            if (!_.isEmpty(urls)) {
+                $urls.val(existing_val + (!_.isEmpty(existing_val) && !existing_val.endsWith('\n') ? '\n' : '') + urls.join('\n') + '\n');
+                $urls.trigger('change');
+            }
+        });
+
+        $('#clear_urls').on('click', function (e) {
+            e.preventDefault();
+            $urls.val('');
+            $sri_hashes.val('');
+        });
 
         $urls.on('change keyup paste', function () {
             let input = $urls.val();
@@ -103,10 +246,18 @@
                 urls.push(url);
             }
 
+            function is_js(url) {
+                return url.endsWith('.js');
+            }
 
-            urls = _.sortedUniqBy(_.uniq(_.filter(urls, function (url) {
-                return url.endsWith('.js') || url.endsWith('.css')
-            })));
+            function is_css(url) {
+                return url.endsWith('.css') || url.indexOf('https://fonts.googleapis.com/css') !== -1
+            }
+
+
+            urls = _.uniq(_.filter(urls, function (url) {
+                return is_js(url) || is_css(url)
+            }));
 
             return Promise.map(urls, function (url) {
                 if (_.has(window.hashes, url)) {
@@ -126,12 +277,11 @@
             })
                 .then(function (hashes) {
                     let hashObject = _.zipObject(urls, hashes);
-                    console.log(hashObject);
 
                     let output = _.map(hashObject, function (hash, url) {
-                        if (url.endsWith('.js')) {
+                        if (is_js(url)) {
                             return _.unescape(`&lt;script src="${url}" integrity="sha384-${hash}" crossorigin="anonymous"&gt;&lt;/script&gt;`);
-                        } else if (url.endsWith('.css')) {
+                        } else if (is_css(url)) {
                             return _.unescape(`&lt;link href="${url}" rel="stylesheet" integrity="sha384-${hash}" crossorigin="anonymous"/&gt;`);
                         }
                     }).join('\n');
