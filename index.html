@@ -1,6 +1,10 @@
 <html lang="en">
 <head>
     <title>SRI Hash Generator</title>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
     <link href="https://fonts.googleapis.com/css?family=Roboto+Mono"
           rel="stylesheet"
           integrity="sha384-tLD56Z1D6Rz8WdhTUwFnaWpDgBwGXSv7vTWCaCqpusURWf+gnWmEZCoQZ3k77H1z"
@@ -12,7 +16,10 @@
           rel="stylesheet"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous"/>
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css"
+          rel="stylesheet"
+          integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+          crossorigin="anonymous"/>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -25,58 +32,81 @@
             height: 200px;
         }
 
+
     </style>
 
 </head>
 <body>
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>SRI Hash Generator</h1>
-        </div>
-    </div>
-
-    <div class="row">
-
-
-        <div class="col-md-3"><h5>Frameworks on <a href="https://cdnjs.com/">cdnjs</a>
-        </h5>
-            <div id="cdnjs_frameworks" class="list-group"></div>
-        </div>
-
-        <div class="col-md-9">
-
-            <div>
-                <form>
-                    <div class="form-group">
-                        <label for="urls">Input URLs:</label><br>
-                        <textarea id="urls"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="sri_hashes">SRI Hashes:</label><br>
-                        <textarea id="sri_hashes" readonly></textarea>
-                    </div>
-
-                    <button type="button" id="clear_urls"
-                            class="btn btn-primary btn-lg btn-block">Clear
-                    </button>
-                </form>
+<div class="d-flex w-100 h-100 mx-auto flex-column">
+    <main>
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>SRI Hash Generator</h1>
+                </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-3">
+                    <div>
+                        <h5>Frameworks on <a
+                                href="https://cdnjs.com/">cdnjs</a>
+                        </h5>
+                        <div id="cdnjs_frameworks" class="list-group"></div>
+                    </div>
+                    <p>
+
+
+                    <div>
+                        <h5>Fonts on <a
+                                href="https://fonts.google.com/">Google
+                            Fonts</a>
+                        </h5>
+                        <div id="google_fonts" class="list-group"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-9">
+
+                    <div>
+                        <form>
+                            <div class="form-group">
+                                <label for="urls">Input URLs:</label><br>
+                                <textarea id="urls"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sri_hashes">SRI Hashes:</label><br>
+                                <textarea id="sri_hashes" readonly></textarea>
+                            </div>
+
+                            <button type="button" id="copy_sri_hashes"
+                                    class="btn btn-primary btn-lg btn-block"
+                                    data-clipboard-target="#sri_hashes">
+                                Copy
+                            </button>
+                            <button type="button" id="clear_urls"
+                                    class="btn btn-secondary btn-lg btn-block">
+                                Clear
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+
         </div>
-    </div>
+    </main>
 
-
-    <footer class="mastfoot mt-auto">
-        <div class="inner">
-            Inspired by:
-            <a href="https://www.srihash.org/">https://www.srihash.org/</a>
+    <footer class="footer mt-auto mb-3">
+        <div class="container">
+            Inspired by: <a href="https://www.srihash.org/">srihash.org</a>. <a
+                href="https://github.com/samloh84/sri-hash-generator"><i
+                class="fab fa-github"></i> Source Code</a>
         </div>
     </footer>
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
         integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
         crossorigin="anonymous"></script>
@@ -101,6 +131,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"
         integrity="sha384-U/+EF1mNzvy5eahP9DeB32duTkAmXrePwnRWtuSh1C/bHHhyR1KZCr/aGZBkctpY"
         crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"
+        integrity="sha384-8CYhPwYlLELodlcQV713V9ZikA3DlCVaXFDpjHfP8Z36gpddf/Vrt47XmKDsCttu"
+        crossorigin="anonymous"></script>
+
 <script>
     $(function () {
 
@@ -143,9 +177,19 @@
             },
             'axios': {
                 files: ['axios.min.js']
+            },
+            'font-awesome': {
+                files: ['all.min.css']
             }
+
         };
 
+        window.google_fonts = [
+            'Roboto',
+            'Roboto Mono',
+            'Source Code Pro',
+            'Inconsolata'
+        ];
 
         Promise.map(_.keys(window.cdnjs_frameworks), function (cdnjs_framework) {
             return Promise.resolve(axios.get(`https://api.cdnjs.com/libraries/${cdnjs_framework}`))
@@ -189,7 +233,20 @@
                 console.error(err);
             });
 
-        $('#cdnjs_frameworks').on('click', 'button', function (e) {
+        let $google_fonts = $('#google_fonts');
+        _.each(window.google_fonts, function (font) {
+            let $button = $('<button>');
+            $button.addClass('list-group-item list-group-item-action');
+
+            $google_fonts.append($button);
+
+            let urls = [`https://fonts.googleapis.com/css?family=${font.replace(/ /, '+')}`];
+
+            $button.text(`${font}`);
+            $button.attr('data-urls', urls.join('|'));
+        });
+
+        $('#cdnjs_frameworks, #google_fonts').on('click', 'button', function (e) {
             e.preventDefault();
             let $this = $(this);
             let $urls = $('#urls');
@@ -211,13 +268,17 @@
             $sri_hashes.val('');
         });
 
+
+        new ClipboardJS('#copy_sri_hashes');
+
+
         $urls.on('change keyup paste', function () {
             let input = $urls.val();
 
             let urls = [];
 
             try {
-                $(`<div>${input}</div>`).find('script, link').each(function (index, element) {
+                $(` < div >${input} < /div>`).find('script, link').each(function (index, element) {
                     let $element = $(element);
                     let tag_name = $element.prop('tagName').toLowerCase();
 
